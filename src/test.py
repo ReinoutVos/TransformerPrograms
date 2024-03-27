@@ -1,70 +1,80 @@
-import argparse
+import numpy as np
+import pandas as pd
+import sort
+import matplotlib.pyplot as plt
 
-from utils import data_utils, metric_utils
-from sort import run
-import random
+BOS = "<s>"
+EOS = "</s>"
+PAD = "<pad>"
 
-import sys
+def make_sort(vocab_size, dataset_size, min_length=4, max_length=16, seed=0):
+    vocab = np.array([str(i) for i in range(vocab_size - 3)])
+    sents, tags = [], []
+    np.random.seed(seed)
+    for _ in range(dataset_size):
+        l = np.random.randint(min_length, max_length - 1)
+        sent = np.random.choice(vocab, size=l, replace=True).tolist()
+        sents.append([BOS] + sent + [EOS])
+        tags.append([PAD] + sorted(sent) + [PAD])
+    return pd.DataFrame({"sent": sents, "tags": tags})
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    # Data
-    parser.add_argument("--dataset_size", type=int, default=-1)
-    parser.add_argument("--max_length", type=int, default=8)
-    
-    args = parser.parse_args()
-
-    return args
-
-def create_dataset(maxlen, samples):
+def create_dataset():
     x = []
     y = []
-
-    MAX_LENGTH = maxlen - 2
-
-    for i in range(samples):
-
-
-        list1 = [(random.randint(0, MAX_LENGTH-2)) for _ in range(MAX_LENGTH)]
-
-        list2 = list1.copy()
-        list2.sort()
-
-        list1 = ['<s>'] + list(map(str, list1)) + ['</s>']
-        list2 = ['<s>'] + list(map(str, list2)) + ['</s>']
-        
-        x.append(list1)
-        y.append(list2)
-
+    for i in range(1, 31):
+        dataset = make_sort(32, 5, i, i+2)
+        ip = dataset['sent'].tolist()
+        op = dataset['tags'].tolist()
+        x.append(ip)
+        y.append(op)
     return x, y
 
-if __name__ == "__main__":
-    args = parse_args()
-    x, y = create_dataset(args.max_length, args.dataset_size)
+def calculate_accuracy(y_pred, y_true):
+    if len(y_pred) != len(y_true):
+        raise ValueError("The lengths of y_pred and y_true lists are not the same.")
 
-    for (i, j) in list(zip(x ,y)):
-        print(f"Input : {i}\nExpected : {j}\nPredicted : {run(i)}\n\n")
+    y_pred = y_pred[1:-1]
+    y_true = y_true[1:-1]
+    correct_y_predictions = 0
+    total_positions = len(y_pred)
 
-    print(run(["<s>", "9", "1", "6", "</s>"]))
-    print(run(["<s>", "8", "4", "4", "0", "6", "9", "</s>"]))
-    print(run(["<s>", "11", "4", "1", "0", "6", "6", "5", "1", "3", "</s>"]))
+    for i in range(total_positions):
+        if y_pred[i] == y_true[i]:
+            correct_y_predictions += 1
 
-    
-'''
-python3 src/test.py --dataset_size 10 --max_length 8;
-'''
+    accuracy = (correct_y_predictions) / (total_positions)
+    return accuracy
+
+def length_generalization():
+    x, y = create_dataset()
+    accuracies = {}
+    for i in range(len(x)):
+        # Accuracy sum for sequences with a length i+4
+        acc_sum = 0
+        for (x_i, y_i) in list(zip(x[i], y[i])):
+            y_pred = sort.run(x_i)
+            acc_sum += calculate_accuracy(y_pred, y_i)
+            # if (i == 4):
+            #     print(f"Input : {x_i}\nExpected : {y_i}\nPredicted : {y_pred}")
+            #     print(acc_sum)
+            #     raise ValueError
+        accuracies[f"{i+3}"] = (acc_sum / len(x[i]))
+    return accuracies
 
 
-'''
-vocab size : decides what tokens and position the model can look at. for ex: if the vocab size is 16, positions: 0-15, tokens: <s>, </s>, <pad>, 0-(vocab_size-4) (0-12)
-min_length : minimum length of the sequence that the dataset is trained on
-max_length : maximum length of the sequence that the dataset is trained on
+def plot_acc(data):
+    x = list(map(int, data.keys()))
+    y = list(data.values())
+    plt.plot(x, y)
+    plt.xlabel('Sequence Length')
+    plt.ylabel('Accuracy')
+    plt.title('Length Generalization on the sort task')
+    plt.grid(True)
+    plt.show()
 
-To show for length generalization:
-train on say, min_length 8, max_length 16
-test on 1-100, for example
-Accuracy graph should be like a plateau, accuracy will be high only on sequences length that it was trained on
 
-'''
+if __name__ == '__main__':
+    acc = length_generalization()
+    # print(acc)
+    plot_acc(acc)
