@@ -665,19 +665,19 @@ python src/run.py \
      --vocab_size 8 \
      --dataset_size 10000 \
      --min_length 1 \
-     --max_length 8 \
+     --max_length 64 \
      --n_epochs 250 \
      --batch_size 512 \
      --lr "5e-2" \
      --n_layers 1 \
-     --n_heads_cat 0 \
+     --n_heads_cat 4 \
      --n_heads_num 4 \
-     --n_cat_mlps 0 \
+     --n_cat_mlps 2 \
      --n_num_mlps 2 \
      --one_hot_embed \
      --count_only \
      --seed 0 \
      --save \
      --save_code \
-     --output_dir "output/histheads04mlps02";
+     --output_dir "output/histlength1";
 '''

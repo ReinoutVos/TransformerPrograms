@@ -23,7 +23,7 @@ def make_hist(vocab_size, dataset_size, min_length=2, max_length=16, seed=0):
 
 
 
-def create_dataset(upTo=32, vocab_size=8, dataset_size=5):
+def create_dataset(upTo=32, vocab_size=8, dataset_size=100):
     """
     Create a dataset for the sort task.
 
@@ -80,7 +80,7 @@ def length_generalization():
     Returns:
         dict: A dictionary containing the accuracies for different sequence lengths.
     """
-    x, y = create_dataset(upTo=3, vocab_size=8)
+    x, y = create_dataset(upTo=64, vocab_size=8)
     accuracies = {}
 
     for i, (sentences, tags) in enumerate(zip(x, y), start=1):
