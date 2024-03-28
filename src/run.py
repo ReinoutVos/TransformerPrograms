@@ -660,8 +660,8 @@ if __name__ == "__main__":
 
 
 '''
-python3 src/run.py \          
-     --dataset "sort" \
+python src/run.py \
+     --dataset "hist" \
      --vocab_size 8 \
      --dataset_size 10000 \
      --min_length 1 \
@@ -669,15 +669,15 @@ python3 src/run.py \
      --n_epochs 250 \
      --batch_size 512 \
      --lr "5e-2" \
-     --n_layers 3 \
-     --n_heads_cat 8 \
-     --n_heads_num 0 \
-     --n_cat_mlps 4 \
-     --n_num_mlps 0 \
+     --n_layers 1 \
+     --n_heads_cat 0 \
+     --n_heads_num 4 \
+     --n_cat_mlps 0 \
+     --n_num_mlps 2 \
      --one_hot_embed \
      --count_only \
      --seed 0 \
      --save \
      --save_code \
-     --output_dir "output/sort";
+     --output_dir "output/histheads04mlps02";
 '''
