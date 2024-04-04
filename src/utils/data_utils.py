@@ -145,6 +145,27 @@ def make_most_freq(
         tags.append(t)
     return pd.DataFrame({"sent": sents, "tags": tags})
 
+def make_custom_algo(
+    vocab_size, dataset_size, min_length=2, max_length=16, seed=0
+):
+    vocab = np.array([str(i) for i in range(vocab_size - 2)])
+    np.random.seed(seed)
+    sents, tags = [], []
+    for _ in range(dataset_size):
+        l = np.random.randint(min_length, max_length)
+        sent = np.random.choice(vocab, size=l, replace=True).tolist()
+        counts = Counter(sent).most_common()
+        print(f"COUNTS : {type(counts)}")
+        t = [PAD]
+        for (num, freq) in counts:
+            t += [num, freq]
+        
+        t += [BOS] * (len(sent) - len(t))
+        sents.append(sent)
+        tags.append(t)
+    return pd.DataFrame({"sent": sents, "tags": tags})
+
+
 
 def sample_dyck(vocab_size=1, max_depth=8, min_depth=1):
     vocab = [("(", ")"), ("{", "}")][:vocab_size]
@@ -607,6 +628,7 @@ def get_dataset(
         "dyck1": make_dyck_pft,
         "dyck2": make_dyck_pft,
         "sort": make_sort,
+        "algo": make_custom_algo
     }
     if name not in fns:
         raise NotImplementedError(name)
