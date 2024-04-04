@@ -18,15 +18,15 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from src.models.transformers import Transformer
-from src.models.programs import (
+from models.transformers import Transformer
+from models.programs import (
     TransformerProgramModel,
     argmax,
     gumbel_hard,
     gumbel_soft,
     softmax,
 )
-from src.utils import code_utils, data_utils, logging, metric_utils
+from utils import code_utils, data_utils, logging, metric_utils
 
 logger = logging.get_logger(__name__)
 
@@ -97,7 +97,8 @@ def parse_args():
     parser.add_argument("--save", action="store_true")
     parser.add_argument("--save_code", action="store_true")
 
-    parser.add_argument("--device", type=str, default="cuda")
+    # parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument("--device", type=str, default="cpu")
 
     args = parser.parse_args()
 
@@ -656,3 +657,27 @@ if __name__ == "__main__":
     with open(Path(args.output_dir) / "args.json", "w") as f:
         json.dump(vars(args), f)
     run(args)
+
+
+'''
+python3 src/run.py \          
+     --dataset "sort" \
+     --vocab_size 8 \
+     --dataset_size 10000 \
+     --min_length 1 \
+     --max_length 8 \
+     --n_epochs 250 \
+     --batch_size 512 \
+     --lr "5e-2" \
+     --n_layers 3 \
+     --n_heads_cat 8 \
+     --n_heads_num 0 \
+     --n_cat_mlps 4 \
+     --n_num_mlps 0 \
+     --one_hot_embed \
+     --count_only \
+     --seed 0 \
+     --save \
+     --save_code \
+     --output_dir "output/sort";
+'''
