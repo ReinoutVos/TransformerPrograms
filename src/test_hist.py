@@ -80,7 +80,7 @@ def length_generalization():
     Returns:
         dict: A dictionary containing the accuracies for different sequence lengths.
     """
-    x, y = create_dataset(upTo=64, vocab_size=8)
+    x, y = create_dataset(upTo=48, vocab_size=8)
     accuracies = {}
 
     for i, (sentences, tags) in enumerate(zip(x, y), start=1):
@@ -101,7 +101,7 @@ def plot_acc(data):
     plt.plot(x, y)
     plt.xlabel('Sequence Length')
     plt.ylabel('Accuracy')
-    plt.title('Length Generalization on the sort task')
+    plt.title('Performance of the Histogram Model on Different Sequence Lengths Trained on k=|V|=8, L=1, H=4, M=2, 32<L<48')
     plt.grid(True)
     plt.show()
 
