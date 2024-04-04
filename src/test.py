@@ -21,19 +21,19 @@ def make_sort(vocab_size, dataset_size, min_length=4, max_length=16, seed=0):
         tags.append([PAD] + sorted(sent) + [PAD])
     return pd.DataFrame({"sent": sents, "tags": tags})
 
-
-def create_dataset(min_seq_len=1, max_seq_len=31):
+# Creates a dataset of varying sequence lengths. There are 100 examples for each sequence length by default.
+def create_dataset(min_seq_len=1, max_seq_len=31, num_examples=100, vocab_size=32):
     x = []
     y = []
     for i in range(min_seq_len, max_seq_len):
-        dataset = make_sort(32, 100, i, i+2)
+        dataset = make_sort(vocab_size, num_examples, i, i+2)
         ip = dataset['sent'].tolist()
         op = dataset['tags'].tolist()
         x.append(ip)
         y.append(op)
     return x, y
 
-# Calculates accuracy as the correct places / total places (expected = 1,2,3,4 | output = 1, 2, 4, 3 | acc = 0.5)
+# Calculates accuracy as the correct places / total places (expected = 1,2,3,4 | output = 1,2,4,3 | acc = 0.5)
 def calculate_accuracy(y_pred, y_true):
     if len(y_pred) != len(y_true):
         raise ValueError("The lengths of y_pred and y_true lists are not the same.")
@@ -52,6 +52,7 @@ def calculate_accuracy(y_pred, y_true):
     accuracy = (correct_y_predictions) / (total_positions)
     return accuracy
 
+# Returns the accuracy for each sequence length
 def length_generalization():
     x, y = create_dataset()
     accuracies = {}
