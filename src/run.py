@@ -666,8 +666,8 @@ python src/run.py \
      --dataset "hist" \
      --vocab_size 8 \
      --dataset_size 10000 \
-     --min_length 1 \
-     --max_length 64 \
+     --min_length 32 \
+     --max_length 48 \
      --n_epochs 250 \
      --batch_size 512 \
      --lr "5e-2" \
@@ -681,5 +681,5 @@ python src/run.py \
      --seed 0 \
      --save \
      --save_code \
-     --output_dir "output/histlength1";
+     --output_dir "output/histlength2";
 '''
