@@ -97,8 +97,8 @@ def parse_args():
     parser.add_argument("--save", action="store_true")
     parser.add_argument("--save_code", action="store_true")
 
-    # parser.add_argument("--device", type=str, default="cuda")
-    parser.add_argument("--device", type=str, default="cpu")
+    parser.add_argument("--device", type=str, default="cuda")
+    # parser.add_argument("--device", type=str, default="cpu")
 
     args = parser.parse_args()
 
@@ -193,6 +193,7 @@ def run_training(
                     ).sum(-1)
                 else:
                     log_probs = logits.log_softmax(-1)
+                    tgts = tgts.type(torch.int64)
                     all_losses = -log_probs.gather(
                         2, tgts.unsqueeze(-1)
                     ).squeeze(-1)
@@ -311,6 +312,7 @@ def run_test(
                 (tgts == y_pad_idx).unsqueeze(-1), 0.0
             ).sum(-1)
         else:
+            tgts = tgts.type(torch.int64)
             all_losses = -log_probs.gather(2, tgts.unsqueeze(-1)).squeeze(-1)
             masked_losses = all_losses.masked_fill((tgts == y_pad_idx), 0.0)
             lengths = (tgts != y_pad_idx).sum(-1)
@@ -660,24 +662,24 @@ if __name__ == "__main__":
 
 
 '''
-python3 src/run.py \          
-     --dataset "sort" \
+python src/run.py \
+     --dataset "hist" \
      --vocab_size 8 \
      --dataset_size 10000 \
      --min_length 1 \
-     --max_length 8 \
+     --max_length 64 \
      --n_epochs 250 \
      --batch_size 512 \
      --lr "5e-2" \
-     --n_layers 3 \
-     --n_heads_cat 8 \
-     --n_heads_num 0 \
-     --n_cat_mlps 4 \
-     --n_num_mlps 0 \
+     --n_layers 1 \
+     --n_heads_cat 4 \
+     --n_heads_num 4 \
+     --n_cat_mlps 2 \
+     --n_num_mlps 2 \
      --one_hot_embed \
      --count_only \
      --seed 0 \
      --save \
      --save_code \
-     --output_dir "output/sort";
+     --output_dir "output/histlength1";
 '''
