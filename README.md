@@ -1,7 +1,7 @@
 # Learning Transformer Programs
 
 To test any program for length generalization, follow these steps:
-* Run the `run.py` file as described in the original documentation.
+* Run the `run.py` file as described in the original documentation. (To train for the custom algorithm, "algo" is used as the --dataset parameter)
 * Copy the `program_name.py` file from the `output/program_name` folder into the `src` folder.
 * Run the `test.py` file. The outputs will be saved into the `length_gen` folder.
 
