@@ -8,8 +8,22 @@ BOS = "<s>"
 EOS = "</s>"
 PAD = "<pad>"
 
+# TO TEST YOUR MODEL, COPY THE hist.py (THE LEARNED PROGRAM) FILE FROM THE OUTPUT FOLDER AND PASTE THE CODE INTO THE SORT.PY FILE IN THE SRC FOLDER
 
 def make_hist(vocab_size, dataset_size, min_length=2, max_length=16, seed=0):
+    """
+    Generate a dataset of sentences and their corresponding tags.
+
+    Args:
+        vocab_size (int): The size of the vocabulary.
+        dataset_size (int): The number of sentences to generate.
+        min_length (int): The minimum length of a sentence.
+        max_length (int): The maximum length of a sentence.
+        seed (int): The random seed for reproducibility.
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing the generated sentences and tags.
+    """
     vocab = np.array([str(i) for i in range(vocab_size - 2)])
     sents, tags = [], []
     np.random.seed(seed)
@@ -22,10 +36,14 @@ def make_hist(vocab_size, dataset_size, min_length=2, max_length=16, seed=0):
     return pd.DataFrame({"sent": sents, "tags": tags})
 
 
-
 def create_dataset(upTo=32, vocab_size=8, dataset_size=100):
     """
     Create a dataset for the sort task.
+
+    Args:
+        upTo (int): The maximum length of the sequences.
+        vocab_size (int): The size of the vocabulary.
+        dataset_size (int): The number of datasets to generate.
 
     Returns:
         tuple: A tuple containing two lists: x (input sequences) and y (expected output sequences).
@@ -41,6 +59,7 @@ def create_dataset(upTo=32, vocab_size=8, dataset_size=100):
         y.append(op)
 
     return np.array(x), np.array(y)
+
 
 def calculate_accuracy(y_pred, y_true):
     """
@@ -59,9 +78,6 @@ def calculate_accuracy(y_pred, y_true):
     # Remove first element from each list
     y_pred = [pred[1:] for pred in y_pred]
     y_true = [true[1:] for true in y_true]
-
-    # print("preds", y_pred)
-    # print("tags", y_true)  
 
     correct_y_predictions = 0
 
@@ -89,6 +105,7 @@ def length_generalization():
 
     return accuracies
 
+
 def plot_acc(data):
     """
     Plot the accuracy of the length generalization on the sort task.
@@ -104,6 +121,7 @@ def plot_acc(data):
     plt.title('Performance of the Histogram Model on Different Sequence Lengths Trained on k=|V|=8, L=1, H=4, M=2, 32<L<48')
     plt.grid(True)
     plt.show()
+
 
 if __name__ == '__main__':
     acc = length_generalization()
