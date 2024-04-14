@@ -1,5 +1,15 @@
 # Learning Transformer Programs
 
+To test any program for length generalization, follow these steps:
+* Run the `run.py` file as described in the original documentation.
+* Copy the `program_name.py` file from the `output/program_name` folder into the `src` folder.
+* Run the `test.py` file. The outputs will be saved into the `length_gen` folder.
+
+---
+
+
+
+
 This repository contains the code for our paper, [Learning Transformer Programs](https://arxiv.org/abs/2306.01128).
 The code can be used to train a modified Transformer to solve a task, and then convert it into a human-readable Python program.
 The repository also includes a number of [example programs](#Example-programs), which we learned for the tasks described in the paper.
